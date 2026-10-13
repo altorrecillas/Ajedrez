@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#10141a">
+<meta name="description" content="Ajedrez — juega contra la máquina o en modo pasa-y-juega, con reglas completas, IA local y diseño responsive para móvil.">
+<link rel="manifest" href="manifest.json">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<link rel="icon" href="icons/favicon-32.png" sizes="32x32">
+<link rel="icon" href="icons/icon-192.png" sizes="192x192">
+<title>Ajedrez</title>
+<link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+<div id="splash" class="splash" aria-hidden="true">
+  <svg class="splash-mark" viewBox="0 0 45 45"><path d="M22.5 13 C28 16.5 30.5 21 29.5 26 C29 28.7 27.2 30.7 24.7 31.5 L24.7 33.6 L28 33.6 C29 33.6 29.6 34.4 29.6 35.3 C29.6 36.4 28.6 37 27.5 37 L17.5 37 C16.4 37 15.4 36.4 15.4 35.3 C15.4 34.4 16 33.6 17 33.6 L20.3 33.6 L20.3 31.5 C17.8 30.7 16 28.7 15.5 26 C14.5 21 17 16.5 22.5 13 Z" fill="currentColor"/><path d="M22.5 6 L22.5 12 M19.3 9.2 L25.7 9.2" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><rect x="14.5" y="37" width="16" height="4.2" rx="1.2" fill="currentColor"/></svg>
+  <div class="splash-title">Ajedrez</div>
+</div>
+<div id="ariaStatus" class="sr-only" aria-live="polite" aria-atomic="true"></div>
+<div id="toast" class="toast" hidden></div>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <linearGradient id="gPieceWhite" x1="20%" y1="6%" x2="88%" y2="100%">
+      <stop offset="0%" stop-color="#fffdf6"/>
+      <stop offset="55%" stop-color="#f0ddb3"/>
+      <stop offset="100%" stop-color="#cda869"/>
+    </linearGradient>
+    <linearGradient id="gPieceBlack" x1="20%" y1="6%" x2="88%" y2="100%">
+      <stop offset="0%" stop-color="#5c6270"/>
+      <stop offset="50%" stop-color="#2a2e37"/>
+      <stop offset="100%" stop-color="#0d0f12"/>
+    </linearGradient>
+    <radialGradient id="gPieceShine" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity=".95"/>
+      <stop offset="100%" stop-color="#ffffff" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="gPieceShadow" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#000000" stop-opacity=".5"/>
+      <stop offset="100%" stop-color="#000000" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+</svg>
+<div id="app">
+
+  <header class="topbar">
+    <div class="brand">
+      <svg class="brand-mark" viewBox="0 0 45 45" aria-hidden="true"></svg>
+      <span>Ajedrez</span>
+    </div>
+    <div class="topbar-actions">
+      <button id="btnPosition" class="icon-btn" aria-label="Posición y partida (FEN/PGN)" title="Posición y partida">
+        <svg viewBox="0 0 24 24" class="icon"><path class="icon-stroke" d="M4 12v7a1 1 0 0 0 1 1h14a1 1 0 0 0 1-1v-7M16 6l-4-4-4 4M12 2v14" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+      <button id="btnMenu" class="icon-btn" aria-label="Ajustes" title="Ajustes">
+        <svg viewBox="0 0 24 24" class="icon"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.9l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.9-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1-1.6 1.7 1.7 0 0 0-1.9.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.9 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.6-1 1.7 1.7 0 0 0-.3-1.9l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.9.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.9-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.9V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <nav class="main-tabs" id="mainTabs">
+    <button class="tab-btn active" data-view="play">Jugar</button>
+    <button class="tab-btn" data-view="lessons">Lecciones</button>
+  </nav>
+
+  <main class="layout" id="playView">
+
+    <section class="board-column">
+      <div class="status-bar">
+        <div class="turn-indicator" id="turnIndicator">
+          <span class="turn-dot" id="turnDot"></span>
+          <span id="turnText">Turno de las blancas</span>
+        </div>
+        <div class="ai-thinking" id="aiThinking" hidden>
+          <span class="spinner"></span> Pensando…
+        </div>
+      </div>
+
+      <div class="review-banner" id="reviewBanner" hidden>
+        <span id="reviewText">Viendo una jugada anterior</span>
+        <button id="btnExitReview" class="btn-link">Volver a la partida actual</button>
+      </div>
+
+      <div class="clocks-row" id="clocksRow" hidden>
+        <div class="clock-chip" id="clockBlack">
+          <span class="clock-label">Negras</span>
+          <span class="clock-time" id="clockBlackTime">10:00</span>
+        </div>
+        <div class="clock-chip" id="clockWhite">
+          <span class="clock-label">Blancas</span>
+          <span class="clock-time" id="clockWhiteTime">10:00</span>
+        </div>
+      </div>
+
+      <div class="board-wrap">
+        <div class="coord-files" id="coordFiles"></div>
+        <div class="coord-ranks" id="coordRanks"></div>
+        <div class="board" id="board" role="grid" aria-label="Tablero de ajedrez"></div>
+      </div>
+
+      <div class="controls">
+        <button id="btnNew" class="btn btn-primary">Nueva partida</button>
+        <button id="btnUndo" class="btn">Deshacer</button>
+        <button id="btnFlip" class="btn">Voltear</button>
+      </div>
+      <div class="controls controls-secondary">
+        <button id="btnDrawOffer" class="btn btn-ghost">Ofrecer tablas</button>
+        <button id="btnResign" class="btn btn-ghost">Rendirse</button>
+      </div>
+    </section>
+
+    <aside class="side-panel">
+
+      <div class="panel-card mode-card">
+        <div class="segmented" id="modeSwitch">
+          <button class="seg-btn active" data-mode="ai">Vs. Máquina</button>
+          <button class="seg-btn" data-mode="2p">2 jugadores</button>
+        </div>
+        <div class="difficulty-row" id="difficultyRow">
+          <label for="difficulty">Dificultad</label>
+          <select id="difficulty">
+            <option value="easy">Fácil (~1320 Elo)</option>
+            <option value="medium" selected>Media (~1900 Elo)</option>
+            <option value="hard">Difícil (~2600 Elo)</option>
+            <option value="maximum">Máxima (Stockfish sin límite)</option>
+          </select>
+        </div>
+        <div class="difficulty-row">
+          <label for="timeControl">Reloj</label>
+          <select id="timeControl">
+            <option value="none" selected>Sin reloj</option>
+            <option value="1+0">Bala · 1 min</option>
+            <option value="1+1">Bala · 1 | 1</option>
+            <option value="3+0">Blitz · 3 min</option>
+            <option value="3+2">Blitz · 3 | 2</option>
+            <option value="5+0">Blitz · 5 min</option>
+            <option value="10+0">Rápidas · 10 min</option>
+            <option value="10+5">Rápidas · 10 | 5</option>
+            <option value="15+10">Rápidas · 15 | 10</option>
+            <option value="30+0">Clásica · 30 min</option>
+          </select>
+        </div>
+        <p class="field-hint" id="timeControlHint" hidden>Se aplicará en la próxima partida nueva.</p>
+      </div>
+
+      <div class="panel-card">
+        <div class="captured-row">
+          <div class="captured-tray" id="capturedByWhite" aria-label="Piezas negras capturadas"></div>
+          <div class="material-diff" id="materialDiff"></div>
+        </div>
+        <div class="captured-row">
+          <div class="captured-tray" id="capturedByBlack" aria-label="Piezas blancas capturadas"></div>
+        </div>
+      </div>
+
+      <div class="panel-card history-card">
+        <h2 class="panel-title">Movimientos</h2>
+        <ol class="move-list" id="moveList"></ol>
+      </div>
+
+    </aside>
+  </main>
+
+  <main class="lessons-view" id="lessonsView" hidden>
+    <div class="daily-card" id="dailyCard">
+      <div class="daily-card-head">
+        <span class="daily-badge">Puzzle del día</span>
+        <span id="dailyMeta"></span>
+      </div>
+      <h2 id="dailyTitle">—</h2>
+      <p id="dailyDesc"></p>
+      <button id="btnDailyPlay" class="btn btn-primary">Resolver ahora</button>
+    </div>
+
+    <h2 class="panel-title lessons-grid-title">Lecciones por tema táctico</h2>
+    <div class="lesson-grid" id="lessonGrid"></div>
+    <p class="lessons-credit">Posiciones tomadas de la base de datos pública de puzzles de <a href="https://database.lichess.org/#puzzles" target="_blank" rel="noopener">Lichess.org</a> (licencia CC0), verificadas jugada a jugada con el motor de esta app.</p>
+  </main>
+
+  <main class="puzzle-view" id="puzzleView" hidden>
+    <div class="status-bar">
+      <div class="turn-indicator">
+        <span class="lesson-icon" id="puzzleIcon"></span>
+        <span id="puzzleTitle">Puzzle</span>
+      </div>
+      <button id="btnPuzzleExit" class="icon-btn" aria-label="Volver a lecciones" title="Volver">
+        <svg viewBox="0 0 24 24" class="icon"><path class="icon-stroke" d="M18 6 6 18M6 6l12 12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+
+    <p class="puzzle-prompt" id="puzzlePrompt">Encuentra la mejor jugada</p>
+
+    <div class="board-wrap">
+      <div class="coord-files" id="puzzleCoordFiles"></div>
+      <div class="coord-ranks" id="puzzleCoordRanks"></div>
+      <div class="board" id="puzzleBoard" role="grid" aria-label="Tablero del puzzle"></div>
+    </div>
+
+    <div class="puzzle-feedback" id="puzzleFeedback" hidden></div>
+
+    <div class="controls">
+      <button id="btnPuzzleHint" class="btn">Pista</button>
+      <button id="btnPuzzleRetry" class="btn">Reiniciar</button>
+      <button id="btnPuzzleNext" class="btn btn-primary" hidden>Siguiente ▸</button>
+    </div>
+
+    <div class="puzzle-dots" id="puzzleDots"></div>
+  </main>
+</div>
+
+<!-- Modal de promoción -->
+<div class="modal-overlay" id="promoOverlay" hidden>
+  <div class="modal promo-modal" role="dialog" aria-label="Elige pieza de coronación">
+    <h3>Corona el peón</h3>
+    <div class="promo-choices" id="promoChoices"></div>
+  </div>
+</div>
+
+<!-- Modal de fin de partida -->
+<div class="modal-overlay" id="gameOverOverlay" hidden>
+  <div class="modal gameover-modal" role="dialog" aria-label="Partida terminada">
+    <h3 id="gameOverTitle">Jaque mate</h3>
+    <p id="gameOverSubtitle">Las blancas ganan</p>
+    <div class="modal-actions">
+      <button id="btnRematch" class="btn btn-primary">Revancha</button>
+      <button id="btnCloseGameOver" class="btn">Cerrar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Posición y partida (FEN/PGN) -->
+<div class="modal-overlay" id="positionOverlay" hidden>
+  <div class="modal position-modal" role="dialog" aria-label="Posición y partida">
+    <h3>Posición y partida</h3>
+
+    <label class="field-label">Guardar y continuar luego</label>
+    <p class="field-hint">Descarga un archivo con la partida actual para retomarla en este mismo dispositivo o en otro.</p>
+    <div class="file-actions">
+      <button id="btnDownloadGame" class="btn btn-primary">Descargar partida</button>
+      <button id="btnUploadGame" class="btn">Subir partida</button>
+    </div>
+    <input type="file" id="uploadGameInput" accept=".json,application/json" hidden>
+
+    <hr class="modal-sep">
+
+    <label class="field-label" for="fenOutput">FEN actual</label>
+    <textarea id="fenOutput" class="field-textarea" rows="2" readonly></textarea>
+    <button id="btnCopyFen" class="btn">Copiar FEN</button>
+
+    <label class="field-label" for="pgnOutput" style="margin-top:14px">Jugadas (PGN)</label>
+    <textarea id="pgnOutput" class="field-textarea" rows="3" readonly></textarea>
+    <button id="btnCopyPgn" class="btn">Copiar PGN</button>
+
+    <hr class="modal-sep">
+
+    <label class="field-label" for="fenInput">Cargar posición (pega un FEN)</label>
+    <textarea id="fenInput" class="field-textarea" rows="2" placeholder="rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1"></textarea>
+    <button id="btnLoadFen" class="btn">Cargar FEN</button>
+
+    <label class="field-label" for="pgnInput" style="margin-top:14px">Cargar partida (pega PGN)</label>
+    <textarea id="pgnInput" class="field-textarea" rows="3" placeholder="1. e4 e5 2. Nf3 Nc6 3. Bb5…"></textarea>
+    <button id="btnLoadPgn" class="btn">Cargar PGN</button>
+
+    <button id="btnPositionClose" class="btn btn-primary" style="margin-top:16px;width:100%">Cerrar</button>
+  </div>
+</div>
+
+<!-- Panel de ajustes -->
+<div class="modal-overlay" id="menuOverlay" hidden>
+  <div class="modal menu-modal" role="dialog" aria-label="Ajustes">
+    <h3>Ajustes</h3>
+    <label class="menu-toggle">
+      <span>Sonido</span>
+      <input type="checkbox" id="menuSound" checked>
+    </label>
+    <label class="menu-toggle">
+      <span>Tema oscuro</span>
+      <input type="checkbox" id="menuTheme">
+    </label>
+    <button id="btnMenuClose" class="btn btn-primary" style="margin-top:14px;width:100%">Listo</button>
+    <p class="lessons-credit">El oponente usa <a href="https://github.com/nmrugg/stockfish.js" target="_blank" rel="noopener">Stockfish</a> (licencia GPLv3), ejecutado localmente en tu dispositivo.</p>
+  </div>
+</div>
+
+<script src="js/engine.js"></script>
+<script src="js/ai.js"></script>
+<script src="js/opening-book.js"></script>
+<script src="js/stockfish-bridge.js"></script>
+<script src="js/pieces.js"></script>
+<script src="js/lessons-data.js"></script>
+<script src="js/app.js"></script>
+<script src="js/puzzle-trainer.js"></script>
+</body>
+</html>

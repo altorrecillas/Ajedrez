@@ -1,0 +1,25 @@
+# dependencias y entornos
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.pyc
+# compilados y temporales
+dist/
+build/
+*.log
+*.tmp
+# sistema, editores y Dropbox
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+.dropbox*
+*conflicted copy*
+*Copia en conflicto*
+# secretos
+.env
+.env.*
+# configuración local del asistente de IA
+.claude/
+CLAUDE.md

@@ -1,0 +1,33 @@
+{
+  "name": "Ajedrez",
+  "short_name": "Ajedrez",
+  "description": "Juega al ajedrez contra la máquina o en modo pasa-y-juega, con reglas completas y diseño responsive para móvil.",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#10141a",
+  "theme_color": "#10141a",
+  "lang": "es",
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ],
+  "shortcuts": [
+    {
+      "name": "Nueva partida",
+      "short_name": "Nueva partida",
+      "description": "Empieza una partida nueva directamente",
+      "url": "./index.html?action=new",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Puzzle del día",
+      "short_name": "Puzzle del día",
+      "description": "Abre directamente el puzzle táctico de hoy",
+      "url": "./index.html?action=daily",
+      "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}
